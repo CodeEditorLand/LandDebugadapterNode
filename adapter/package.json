@@ -24,9 +24,9 @@
 		"@vscode/debugprotocol": "1.65.0"
 	},
 	"devDependencies": {
-		"@types/mocha": "^9.1.0",
-		"mocha": "^9.2.1",
-		"typescript": "^4.9.4"
+		"@types/mocha": "9.1.0",
+		"mocha": "9.2.1",
+		"typescript": "4.9.4"
 	},
 	"scripts": {
 		"prepack": "npm run compile",
