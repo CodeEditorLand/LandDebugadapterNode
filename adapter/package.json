@@ -1,37 +1,45 @@
 {
 	"name": "@vscode/debugadapter",
+	"version": "0.0.1",
+	"private": false,
 	"description": "Debug adapter implementation for node",
-	"version": "1.65.0",
-	"author": "Microsoft Corporation",
-	"license": "MIT",
+	"homepage": "https://github.com/CodeEditorLand/Foundation#readme",
+	"bugs": {
+		"url": "https://github.com/CodeEditorLand/Foundation/issues"
+	},
 	"repository": {
 		"type": "git",
-		"url": "https://github.com/microsoft/vscode-debugadapter-node.git"
+		"url": "git+https://github.com/CodeEditorLand/Foundation.git"
 	},
-	"engines": {
-		"node": ">=14"
+	"license": "SEE LICENSE IN LICENSE",
+	"author": {
+		"name": "Playform",
+		"email": "Hello@Playform.Cloud",
+		"url": "https://playform.cloud"
 	},
-	"bugs": {
-		"url": "https://github.com/microsoft/vscode-debugadapter-node/issues"
-	},
+	"type": "module",
 	"main": "./lib/main.js",
 	"browser": {
-		"./lib/runDebugAdapter.js": "./lib/web/runDebugAdapterStub.js",
-		"./lib/internalLogger.js": "./lib/web/internalLoggerStub.js"
+		"./lib/internalLogger.js": "./lib/web/internalLoggerStub.js",
+		"./lib/runDebugAdapter.js": "./lib/web/runDebugAdapterStub.js"
 	},
 	"typings": "./lib/main",
+	"scripts": {
+		"compile": "tsc",
+		"prepack": "npm run compile",
+		"prepublishOnly": "TypeScriptESBuild 'Source/**/*.ts'",
+		"watch": "tsc -w"
+	},
 	"dependencies": {
 		"@vscode/debugprotocol": "1.65.0"
 	},
 	"devDependencies": {
 		"@types/mocha": "10.0.6",
 		"mocha": "10.3.0",
-		"typescript": "5.4.2"
+		"typescript": "5.4.2",
+		"typescript-esbuild": "latest"
 	},
-	"scripts": {
-		"prepack": "npm run compile",
-		"compile": "tsc",
-		"watch": "tsc -w",
-		"test": "mocha --ui tdd --spec \"lib/tests/*.test.js\""
+	"publishConfig": {
+		"access": "public"
 	}
 }

@@ -1,18 +1,36 @@
 {
 	"name": "root",
-	"private": true,
-	"license": "MIT",
+	"version": "0.0.1",
+	"private": false,
+	"homepage": "https://github.com/CodeEditorLand/Foundation#readme",
+	"bugs": {
+		"url": "https://github.com/CodeEditorLand/Foundation/issues"
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/CodeEditorLand/Foundation.git"
+	},
+	"license": "SEE LICENSE IN LICENSE",
+	"author": {
+		"name": "Playform",
+		"email": "Hello@Playform.Cloud",
+		"url": "https://playform.cloud"
+	},
+	"type": "module",
 	"workspaces": [
 		"protocol",
 		"testSupport",
 		"adapter"
 	],
 	"scripts": {
+		"compile": "npm run compile --workspaces",
+		"prepublishOnly": "TypeScriptESBuild 'Source/**/*.ts'",
 		"sync-dap": "curl https://microsoft.github.io/debug-adapter-protocol/debugAdapterProtocol.json > debugProtocol.json && npm run compile",
 		"sync-next-dap": "curl https://raw.githubusercontent.com/microsoft/debug-adapter-protocol/main/debugAdapterProtocol.json > debugProtocol.json && npm run compile",
-		"test": "npm run test --workspaces --if-present",
-		"compile": "npm run compile --workspaces",
 		"version": "npm version --workspaces"
+	},
+	"devDependencies": {
+		"typescript-esbuild": "latest"
 	},
 	"publishConfig": {
 		"access": "public"
