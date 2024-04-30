@@ -1,31 +1,41 @@
 {
 	"name": "@vscode/debugadapter-testsupport",
+	"version": "0.0.1",
+	"private": false,
 	"description": "Npm module with mocha test support for Visual Studio Code debug adapters",
-	"version": "1.65.0",
-	"author": "Microsoft Corporation",
-	"license": "MIT",
-	"engines": {
-		"node": ">=14"
+	"keywords": [
+		"land"
+	],
+	"homepage": "HTTPS://GitHub.Com/CodeEditorLand/LandDebugAdapterNode#readme",
+	"bugs": {
+		"url": "HTTPS://GitHub.Com/CodeEditorLand/LandDebugAdapterNode/issues"
 	},
 	"repository": {
 		"type": "git",
-		"url": "https://github.com/microsoft/vscode-debugadapter-node.git"
+		"url": "git+HTTPS://github.com/CodeEditorLand/LandDebugAdapterNode.git"
 	},
-	"bugs": {
-		"url": "https://github.com/microsoft/vscode-debugadapter-node/issues"
+	"license": "SEE LICENSE IN LICENSE",
+	"author": {
+		"name": "🌆 — Land —",
+		"email": "Land@PlayForm.Cloud",
+		"url": "HTTPS://Land.PlayForm.Cloud"
 	},
+	"type": "module",
 	"main": "./lib/main.js",
 	"typings": "./lib/main",
-	"dependencies": {
-		"@vscode/debugprotocol": "1.65.0"
-	},
-	"devDependencies": {
-		"@types/node": "14.x",
-		"typescript": "^4.9.4"
-	},
 	"scripts": {
-		"prepack": "npm run compile",
+		"Document": "Document 'Source/**/*.ts'",
 		"compile": "tsc",
-		"watch": "tsc -w"
+		"prepack": "npm run compile",
+		"prepublishOnly": "Build 'Source/**/*.ts'"
+	},
+	"dependencies": {},
+	"devDependencies": {
+		"@playform/build": "0.0.7",
+		"@playform/document": "0.0.6",
+		"@types/node": "14.x"
+	},
+	"publishConfig": {
+		"access": "public"
 	}
 }

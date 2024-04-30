@@ -1,24 +1,39 @@
 {
 	"name": "@vscode/debugprotocol",
+	"version": "0.0.1",
+	"private": false,
 	"description": "Npm module with declarations for the Visual Studio Code debug protocol",
-	"version": "1.65.0",
-	"author": "Microsoft Corporation",
-	"license": "MIT",
+	"keywords": [
+		"land"
+	],
+	"homepage": "HTTPS://GitHub.Com/CodeEditorLand/LandDebugAdapterNode#readme",
+	"bugs": {
+		"url": "HTTPS://GitHub.Com/CodeEditorLand/LandDebugAdapterNode/issues"
+	},
 	"repository": {
 		"type": "git",
-		"url": "https://github.com/microsoft/vscode-debugadapter-node.git"
+		"url": "git+HTTPS://github.com/CodeEditorLand/LandDebugAdapterNode.git"
 	},
-	"bugs": {
-		"url": "https://github.com/microsoft/vscode-debugadapter-node/issues"
+	"license": "SEE LICENSE IN LICENSE",
+	"author": {
+		"name": "🌆 — Land —",
+		"email": "Land@PlayForm.Cloud",
+		"url": "HTTPS://Land.PlayForm.Cloud"
 	},
+	"type": "module",
 	"main": "./lib/debugProtocol.js",
 	"typings": "./lib/debugProtocol",
-	"devDependencies": {
-		"typescript": "^4.9.4"
-	},
 	"scripts": {
-		"prepack": "npm run compile",
+		"Document": "Document 'Source/**/*.ts'",
 		"compile": "tsc && node lib/generator",
-		"watch": "tsc -w"
+		"prepack": "npm run compile",
+		"prepublishOnly": "Build 'Source/**/*.ts'"
+	},
+	"devDependencies": {
+		"@playform/build": "0.0.7",
+		"@playform/document": "0.0.6"
+	},
+	"publishConfig": {
+		"access": "public"
 	}
 }
