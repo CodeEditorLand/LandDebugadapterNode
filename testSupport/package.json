@@ -1,26 +1,6 @@
 {
 	"name": "@vscode/debugadapter-testsupport",
-	"version": "0.0.1",
-	"private": false,
 	"description": "Npm module with mocha test support for Visual Studio Code debug adapters",
-	"keywords": [
-		"land"
-	],
-	"homepage": "HTTPS://GitHub.Com/CodeEditorLand/LandDebugAdapterNode#readme",
-	"bugs": {
-		"url": "HTTPS://GitHub.Com/CodeEditorLand/LandDebugAdapterNode/issues"
-	},
-	"repository": {
-		"type": "git",
-		"url": "git+HTTPS://github.com/CodeEditorLand/LandDebugAdapterNode.git"
-	},
-	"license": "SEE LICENSE IN LICENSE",
-	"author": {
-		"name": "🛬 Land —",
-		"email": "Land@PlayForm.Cloud",
-		"url": "HTTPS://Land.PlayForm.Cloud"
-	},
-	"type": "module",
 	"main": "./lib/main.js",
 	"typings": "./lib/main",
 	"scripts": {
@@ -32,10 +12,6 @@
 	"dependencies": {},
 	"devDependencies": {
 		"@playform/build": "0.0.7",
-		"@playform/document": "0.0.6",
 		"@types/node": "20.x"
-	},
-	"publishConfig": {
-		"access": "public"
 	}
 }
