@@ -1,19 +1,20 @@
 {
 	"name": "root",
+	"private": true,
+	"license": "MIT",
 	"workspaces": [
 		"protocol",
 		"testSupport",
 		"adapter"
 	],
 	"scripts": {
-		"Document": "Document 'Source/**/*.ts'",
-		"compile": "npm run compile --workspaces",
-		"prepublishOnly": "Build 'Source/**/*.ts'",
 		"sync-dap": "curl https://microsoft.github.io/debug-adapter-protocol/debugAdapterProtocol.json > debugProtocol.json && npm run compile",
 		"sync-next-dap": "curl https://raw.githubusercontent.com/microsoft/debug-adapter-protocol/main/debugAdapterProtocol.json > debugProtocol.json && npm run compile",
+		"test": "npm run test --workspaces --if-present",
+		"compile": "npm run compile --workspaces",
 		"version": "npm version --workspaces"
 	},
-	"devDependencies": {
-		"@playform/build": "0.0.7"
+	"publishConfig": {
+		"access": "public"
 	}
 }
