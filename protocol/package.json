@@ -14,7 +14,7 @@
 	"main": "./lib/debugProtocol.js",
 	"typings": "./lib/debugProtocol",
 	"devDependencies": {
-		"typescript": "^5.4.5"
+		"typescript": "5.4.5"
 	},
 	"scripts": {
 		"prepack": "npm run compile",
