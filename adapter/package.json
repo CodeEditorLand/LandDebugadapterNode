@@ -1,16 +1,37 @@
 {
 	"name": "@vscode/debugadapter",
 	"description": "Debug adapter implementation for node",
+	"version": "1.66.0",
+	"author": "Microsoft Corporation",
+	"license": "MIT",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/microsoft/vscode-debugadapter-node.git"
+	},
+	"engines": {
+		"node": ">=14"
+	},
+	"bugs": {
+		"url": "https://github.com/microsoft/vscode-debugadapter-node/issues"
+	},
 	"main": "./lib/main.js",
 	"browser": {
-		"./lib/internalLogger.js": "./lib/web/internalLoggerStub.js",
-		"./lib/runDebugAdapter.js": "./lib/web/runDebugAdapterStub.js"
+		"./lib/runDebugAdapter.js": "./lib/web/runDebugAdapterStub.js",
+		"./lib/internalLogger.js": "./lib/web/internalLoggerStub.js"
 	},
 	"typings": "./lib/main",
-	"scripts": {
-		"compile": "tsc",
-		"prepack": "npm run compile"
+	"dependencies": {
+		"@vscode/debugprotocol": "1.66.0"
 	},
-	"dependencies": {},
-	"devDependencies": {}
+	"devDependencies": {
+		"@types/mocha": "^9.1.0",
+		"mocha": "^9.2.1",
+		"typescript": "^4.9.4"
+	},
+	"scripts": {
+		"prepack": "npm run compile",
+		"compile": "tsc",
+		"watch": "tsc -w",
+		"test": "mocha --ui tdd --spec \"lib/tests/*.test.js\""
+	}
 }
