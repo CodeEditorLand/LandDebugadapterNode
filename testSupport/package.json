@@ -1,14 +1,14 @@
 {
-	"name": "@vscode/debugadapter-testsupport",
+	"dependencies": {},
 	"description": "Npm module with mocha test support for Visual Studio Code debug adapters",
+	"devDependencies": {
+		"@types/node": "14.x"
+	},
 	"main": "./lib/main.js",
-	"typings": "./lib/main",
+	"name": "@vscode/debugadapter-testsupport",
 	"scripts": {
 		"compile": "tsc",
 		"prepack": "npm run compile"
 	},
-	"dependencies": {},
-	"devDependencies": {
-		"@types/node": "14.x"
-	}
+	"typings": "./lib/main"
 }
