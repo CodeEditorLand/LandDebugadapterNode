@@ -1,11 +1,24 @@
 {
-	"description": "Npm module with declarations for the Visual Studio Code debug protocol",
-	"devDependencies": {},
-	"main": "./lib/debugProtocol.js",
 	"name": "@vscode/debugprotocol",
-	"scripts": {
-		"compile": "tsc && node lib/generator",
-		"prepack": "npm run compile"
+	"description": "Npm module with declarations for the Visual Studio Code debug protocol",
+	"version": "1.66.0",
+	"author": "Microsoft Corporation",
+	"license": "MIT",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/microsoft/vscode-debugadapter-node.git"
 	},
-	"typings": "./lib/debugProtocol"
+	"bugs": {
+		"url": "https://github.com/microsoft/vscode-debugadapter-node/issues"
+	},
+	"main": "./lib/debugProtocol.js",
+	"typings": "./lib/debugProtocol",
+	"devDependencies": {
+		"typescript": "^4.9.4"
+	},
+	"scripts": {
+		"prepack": "npm run compile",
+		"compile": "tsc && node lib/generator",
+		"watch": "tsc -w"
+	}
 }
