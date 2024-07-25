@@ -1,11 +1,10 @@
 {
 	"description": "Npm module with declarations for the Visual Studio Code debug protocol",
-	"devDependencies": {},
 	"main": "./lib/debugProtocol.js",
-	"name": "@vscode/debugprotocol",
+	"typings": "./lib/debugProtocol",
 	"scripts": {
 		"compile": "tsc && node lib/generator",
 		"prepack": "npm run compile"
 	},
-	"typings": "./lib/debugProtocol"
+	"devDependencies": {}
 }
