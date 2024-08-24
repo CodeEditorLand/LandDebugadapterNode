@@ -3,9 +3,13 @@
 [![NPM Version](https://img.shields.io/npm/v/vscode-debugadapter-testsupport.svg)](https://npmjs.org/package/vscode-debugadapter-testsupport)
 [![NPM Downloads](https://img.shields.io/npm/dm/vscode-debugadapter-testsupport.svg)](https://npmjs.org/package/vscode-debugadapter-testsupport)
 
-Npm module with support classes for writing automated tests for a VS Code debug adapter.
+Npm module with support classes for writing automated tests for a VS Code debug
+adapter.
 
-The module provides a toolkit with Promise-based building blocks for individual protocol requests (e.g. `stepInRequest`) and for common request sequences (e.g. `hitBreakpoint`). These building blocks can be easily configured for a specific adapter and combined to form complex scenarios.
+The module provides a toolkit with Promise-based building blocks for individual
+protocol requests (e.g. `stepInRequest`) and for common request sequences (e.g.
+`hitBreakpoint`). These building blocks can be easily configured for a specific
+adapter and combined to form complex scenarios.
 
 Here are three example Mocha tests:
 
@@ -40,7 +44,6 @@ test('should stop on a breakpoint', () => {
     return dc.hitBreakpoint({ program: "main.js" }, "test.js", 15);
 });
 ```
-
 
 ## License
 

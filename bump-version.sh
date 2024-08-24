@@ -11,7 +11,7 @@ npm i
 git checkout -b bump-v$VERSION
 
 git add .
-git commit -m v$VERSION
+git ecommit -m v$VERSION
 git push -u origin bump-v$VERSION
 
 git tag v$VERSION
