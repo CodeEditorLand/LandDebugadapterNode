@@ -1,14 +1,14 @@
 {
 	"name": "root",
-	"workspaces": [
-		"protocol",
-		"testSupport",
-		"adapter"
-	],
 	"scripts": {
 		"compile": "npm run compile --workspaces",
 		"sync-dap": "curl https://microsoft.github.io/debug-adapter-protocol/debugAdapterProtocol.json > debugProtocol.json && npm run compile",
 		"sync-next-dap": "curl https://raw.githubusercontent.com/microsoft/debug-adapter-protocol/main/debugAdapterProtocol.json > debugProtocol.json && npm run compile",
 		"version": "npm version --workspaces"
-	}
+	},
+	"workspaces": [
+		"protocol",
+		"testSupport",
+		"adapter"
+	]
 }
