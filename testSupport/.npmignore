@@ -1,0 +1,6 @@
+/*
+!lib
+!thirdpartynotices.txt
+lib/test/
+lib/generator*
+lib/*.map
