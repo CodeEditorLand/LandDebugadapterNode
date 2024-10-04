@@ -2,29 +2,37 @@
  * Copyright (C) Microsoft Corporation. All rights reserved.
  *--------------------------------------------------------*/
 
-'use strict';
+"use strict";
 
-import * as fs from 'fs';
-import {IProtocol, Protocol as P} from './json_schema';
+import * as fs from "fs";
+
+import { IProtocol, Protocol as P } from "./json_schema";
 
 let numIndents = 0;
 
 function Module(moduleName: string, schema: IProtocol): string {
-
-	let s = '';
-	s += line("/*---------------------------------------------------------------------------------------------");
+	let s = "";
+	s += line(
+		"/*---------------------------------------------------------------------------------------------",
+	);
 	s += line(" *  Copyright (c) Microsoft Corporation. All rights reserved.");
-	s += line(" *  Licensed under the MIT License. See License.txt in the project root for license information.");
-	s += line(" *--------------------------------------------------------------------------------------------*/");
+	s += line(
+		" *  Licensed under the MIT License. See License.txt in the project root for license information.",
+	);
+	s += line(
+		" *--------------------------------------------------------------------------------------------*/",
+	);
 	s += line();
 
 	//s += comment(schema.description);
-	s += comment({ description: 'Declaration module describing the VS Code debug protocol.\nAuto-generated from json schema. Do not edit manually.'});
+	s += comment({
+		description:
+			"Declaration module describing the VS Code debug protocol.\nAuto-generated from json schema. Do not edit manually.",
+	});
 
 	s += openBlock(`export declare module ${moduleName}`);
 
 	for (let typeName in schema.definitions) {
-
 		const d2 = schema.definitions[typeName];
 
 		let supertype: string | null = null;
@@ -34,16 +42,16 @@ function Module(moduleName: string, schema: IProtocol): string {
 				if ((<P.RefType>d).$ref) {
 					supertype = getRef((<P.RefType>d).$ref);
 				} else {
-					s += Interface(typeName, <P.Definition> d, supertype!);
+					s += Interface(typeName, <P.Definition>d, supertype!);
 				}
 			}
 		} else {
 			if ((<P.StringType>d2).enum) {
-				s += Enum(typeName, <P.StringType> d2);
+				s += Enum(typeName, <P.StringType>d2);
 			} else if ((<P.StringType>d2)._enum) {
-				s += _Enum(typeName, <P.StringType> d2);
+				s += _Enum(typeName, <P.StringType>d2);
 			} else {
-				s += Interface(typeName, <P.Definition> d2);
+				s += Interface(typeName, <P.Definition>d2);
 			}
 		}
 	}
@@ -54,12 +62,22 @@ function Module(moduleName: string, schema: IProtocol): string {
 	return s;
 }
 
-function isEnumType(someType: unknown): someType is P.StringType & { enum: string[] } {
-	return !!someType && typeof someType === 'object' && (someType as P.StringType).type === 'string' && !!(someType as P.StringType).enum;
+function isEnumType(
+	someType: unknown,
+): someType is P.StringType & { enum: string[] } {
+	return (
+		!!someType &&
+		typeof someType === "object" &&
+		(someType as P.StringType).type === "string" &&
+		!!(someType as P.StringType).enum
+	);
 }
 
-function Interface(interfaceName: string, definition: P.Definition, superType?: string): string {
-
+function Interface(
+	interfaceName: string,
+	definition: P.Definition,
+	superType?: string,
+): string {
 	let desc = definition.description;
 
 	if (definition.properties && isEnumType(definition.properties.event)) {
@@ -67,17 +85,21 @@ function Interface(interfaceName: string, definition: P.Definition, superType?: 
 		if (eventName) {
 			desc = `Event message for '${eventName}' event type.\n${desc}`;
 		}
-	} else if (definition.properties && isEnumType(definition.properties.command)) {
+	} else if (
+		definition.properties &&
+		isEnumType(definition.properties.command)
+	) {
 		const requestName = `${definition.properties.command.enum[0]}`;
 		if (requestName) {
-			const RequestName = requestName[0].toUpperCase() + requestName.substr(1);
+			const RequestName =
+				requestName[0].toUpperCase() + requestName.substr(1);
 			desc = `${RequestName} request; value of command field is '${requestName}'.\n${desc}`;
 		}
 	}
 
 	let s = line();
 
-	s += comment({ description : desc });
+	s += comment({ description: desc });
 
 	let x = `interface ${interfaceName}`;
 	if (superType) {
@@ -86,7 +108,9 @@ function Interface(interfaceName: string, definition: P.Definition, superType?: 
 	s += openBlock(x);
 
 	for (let propName in definition.properties) {
-		const required = definition.required ? definition.required.indexOf(propName) >= 0 : false;
+		const required = definition.required
+			? definition.required.indexOf(propName) >= 0
+			: false;
 		s += property(propName, !required, definition.properties[propName]);
 	}
 
@@ -112,18 +136,18 @@ function _Enum(typeName: string, definition: P.StringType): string {
 }
 
 function enumAsOrType(enm: string[], open = false) {
-	let r = enm.map(v => `'${v}'`).join(' | ');
+	let r = enm.map((v) => `'${v}'`).join(" | ");
 	if (open) {
-		r += ' | string';
+		r += " | string";
 	}
 	return r;
 }
 
 function comment(c: P.Commentable): string {
+	let description = c.description || "";
 
-	let description = c.description || '';
-
-	if ((<any>c).items) {	// array
+	if ((<any>c).items) {
+		// array
 		c = (<any>c).items;
 	}
 
@@ -136,42 +160,42 @@ function comment(c: P.Commentable): string {
 
 	// an 'open' enum
 	if (c._enum) {
-		description += '\nValues: ';
+		description += "\nValues: ";
 		if (c.enumDescriptions) {
 			for (let i = 0; i < c._enum.length; i++) {
 				description += `\n'${c._enum[i]}': ${c.enumDescriptions[i]}`;
 			}
-			description += '\netc.';
+			description += "\netc.";
 		} else {
-			description += `${c._enum.map(v => `'${v}'`).join(', ')}, etc.`;
+			description += `${c._enum.map((v) => `'${v}'`).join(", ")}, etc.`;
 		}
 	}
 
 	if (description) {
 		description = description.replace(/<code>(.*)<\/code>/g, "'$1'");
 		numIndents++;
-		description = description.replace(/\n/g, '\n' + indent());
+		description = description.replace(/\n/g, "\n" + indent());
 		numIndents--;
-		if (description.indexOf('\n') >= 0) {
+		if (description.indexOf("\n") >= 0) {
 			return line(`/** ${description}\n${indent()}*/`);
 		} else {
 			return line(`/** ${description} */`);
 		}
 	}
-	return '';
+	return "";
 }
 
 function openBlock(str: string, openChar?: string, indent?: boolean): string {
-	indent = typeof indent === 'boolean' ?  indent : true;
-	openChar = openChar || ' {';
+	indent = typeof indent === "boolean" ? indent : true;
+	openChar = openChar || " {";
 	let s = line(`${str}${openChar}`, true, indent);
 	numIndents++;
 	return s;
 }
 
 function closeBlock(closeChar?: string, newline?: boolean): string {
-	newline = typeof newline === 'boolean' ? newline : true;
-	closeChar = closeChar || '}';
+	newline = typeof newline === "boolean" ? newline : true;
+	closeChar = closeChar || "}";
 	numIndents--;
 	return line(closeChar, newline);
 }
@@ -181,32 +205,39 @@ function propertyType(prop: any): string {
 		return getRef(prop.$ref);
 	}
 	if (Array.isArray(prop.oneOf)) {
-		return (prop.oneOf as any[]).map(t => propertyType(t)).join(' | ')
+		return (prop.oneOf as any[]).map((t) => propertyType(t)).join(" | ");
 	}
 	switch (prop.type) {
-		case 'array':
+		case "array":
 			const s = propertyType(prop.items);
-			if (s.indexOf(' ') >= 0) {
+			if (s.indexOf(" ") >= 0) {
 				return `(${s})[]`;
 			}
 			return `${s}[]`;
-		case 'object':
+		case "object":
 			return objectType(prop);
-		case 'string':
+		case "string":
 			if (prop.enum) {
 				return enumAsOrType(prop.enum);
 			} else if (prop._enum) {
 				return enumAsOrType(prop._enum, true);
 			}
 			return `string`;
-		case 'integer':
-			return 'number';
+		case "integer":
+			return "number";
 	}
 	if (Array.isArray(prop.type)) {
-		if (prop.type.length === 7 && prop.type.sort().join() === 'array,boolean,integer,null,number,object,string') {	// silly way to detect all possible json schema types
-			return 'any';
+		if (
+			prop.type.length === 7 &&
+			prop.type.sort().join() ===
+				"array,boolean,integer,null,number,object,string"
+		) {
+			// silly way to detect all possible json schema types
+			return "any";
 		} else {
-			return prop.type.map((v: string) => v === 'integer' ? 'number' : v).join(' | ');
+			return prop.type
+				.map((v: string) => (v === "integer" ? "number" : v))
+				.join(" | ");
 		}
 	}
 	return prop.type;
@@ -214,40 +245,50 @@ function propertyType(prop: any): string {
 
 function objectType(prop: any): string {
 	if (prop.properties) {
-		let s = openBlock('', '{', false);
+		let s = openBlock("", "{", false);
 
 		for (let propName in prop.properties) {
-			const required = prop.required ? prop.required.indexOf(propName) >= 0 : false;
+			const required = prop.required
+				? prop.required.indexOf(propName) >= 0
+				: false;
 			s += property(propName, !required, prop.properties[propName]);
 		}
 
-		s += closeBlock('}', false);
+		s += closeBlock("}", false);
 		return s;
 	}
 
-	if (typeof prop.additionalProperties === 'boolean') {
+	if (typeof prop.additionalProperties === "boolean") {
 		return `{ [key: string]: any; }`;
 	}
 
 	if (prop.additionalProperties) {
 		return `{ [key: string]: ${orType(prop.additionalProperties.type)}; }`;
 	}
-	return '{}';
+	return "{}";
 }
 
 function orType(enm: string | string[]): string {
-	if (typeof enm === 'string') {
+	if (typeof enm === "string") {
 		return enm;
 	}
-	return enm.join(' | ');
+	return enm.join(" | ");
 }
 
-function property(name: string, optional: boolean, prop: P.PropertyType): string {
-	let s = '';
+function property(
+	name: string,
+	optional: boolean,
+	prop: P.PropertyType,
+): string {
+	let s = "";
 	s += comment(prop);
 	const type = propertyType(prop);
-	const propertyDef = `${name}${optional ? '?' : ''}: ${type}`;
-	if (type[0] === '\'' && type[type.length-1] === '\'' && type.indexOf('|') < 0) {
+	const propertyDef = `${name}${optional ? "?" : ""}: ${type}`;
+	if (
+		type[0] === "'" &&
+		type[type.length - 1] === "'" &&
+		type.indexOf("|") < 0
+	) {
 		s += line(`// ${propertyDef};`);
 	} else {
 		s += line(`${propertyDef};`);
@@ -261,18 +302,18 @@ function getRef(ref: string): string {
 	if (matches && matches.length === 3) {
 		return matches[2];
 	}
-	console.log('error: ref');
+	console.log("error: ref");
 	return ref;
 }
 
 function indent(): string {
-	return '\t'.repeat(numIndents);
+	return "\t".repeat(numIndents);
 }
 
 function line(str?: string, newline?: boolean, indnt?: boolean): string {
-	newline = typeof newline === 'boolean' ? newline : true;
-	indnt = typeof indnt === 'boolean' ? indnt : true;
-	let s = '';
+	newline = typeof newline === "boolean" ? newline : true;
+	indnt = typeof indnt === "boolean" ? indnt : true;
+	let s = "";
 	if (str) {
 		if (indnt) {
 			s += indent();
@@ -280,16 +321,19 @@ function line(str?: string, newline?: boolean, indnt?: boolean): string {
 		s += str;
 	}
 	if (newline) {
-		s += '\n';
+		s += "\n";
 	}
 	return s;
 }
 
-
 /// Main
 
-const debugProtocolSchema = JSON.parse(fs.readFileSync(`${__dirname}/../../debugProtocol.json`).toString());
+const debugProtocolSchema = JSON.parse(
+	fs.readFileSync(`${__dirname}/../../debugProtocol.json`).toString(),
+);
 
-const emitStr = Module('DebugProtocol', debugProtocolSchema);
+const emitStr = Module("DebugProtocol", debugProtocolSchema);
 
-fs.writeFileSync(`${__dirname}/debugProtocol.d.ts`, emitStr, { encoding: 'utf-8'});
+fs.writeFileSync(`${__dirname}/debugProtocol.d.ts`, emitStr, {
+	encoding: "utf-8",
+});

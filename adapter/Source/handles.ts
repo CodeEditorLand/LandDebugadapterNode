@@ -4,14 +4,14 @@
  *--------------------------------------------------------------------------------------------*/
 
 export class Handles<T> {
-
 	private START_HANDLE = 1000;
 
-	private _nextHandle : number;
+	private _nextHandle: number;
 	private _handleMap = new Map<number, T>();
 
 	public constructor(startHandle?: number) {
-		this._nextHandle = typeof startHandle === 'number' ? startHandle : this.START_HANDLE;
+		this._nextHandle =
+			typeof startHandle === "number" ? startHandle : this.START_HANDLE;
 	}
 
 	public reset(): void {

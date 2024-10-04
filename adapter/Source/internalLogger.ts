@@ -3,10 +3,17 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import * as fs from 'fs';
-import * as path from 'path';
+import * as fs from "fs";
+import * as path from "path";
 
-import { LogLevel, ILogCallback, trimLastNewline, LogOutputEvent, IInternalLoggerOptions, IInternalLogger } from './logger';
+import {
+	IInternalLogger,
+	IInternalLoggerOptions,
+	ILogCallback,
+	LogLevel,
+	LogOutputEvent,
+	trimLastNewline,
+} from "./logger";
 
 /**
  * Manages logging, whether to console.log, file, or VS Code console.
@@ -56,19 +63,30 @@ export class InternalLogger implements IInternalLogger {
 		// Open a log file in the specified location. Overwritten on each run.
 		if (options.logFilePath) {
 			if (!path.isAbsolute(options.logFilePath)) {
-				this.log(`logFilePath must be an absolute path: ${options.logFilePath}`, LogLevel.Error);
+				this.log(
+					`logFilePath must be an absolute path: ${options.logFilePath}`,
+					LogLevel.Error,
+				);
 			} else {
-				const handleError = (err: Error) => this.sendLog(`Error creating log file at path: ${options.logFilePath}. Error: ${err.toString()}\n`, LogLevel.Error);
+				const handleError = (err: Error) =>
+					this.sendLog(
+						`Error creating log file at path: ${options.logFilePath}. Error: ${err.toString()}\n`,
+						LogLevel.Error,
+					);
 
 				try {
-					await fs.promises.mkdir(path.dirname(options.logFilePath), { recursive: true });
+					await fs.promises.mkdir(path.dirname(options.logFilePath), {
+						recursive: true,
+					});
 					this.log(`Verbose logs are written to:\n`, LogLevel.Warn);
-					this.log(options.logFilePath + '\n', LogLevel.Warn);
+					this.log(options.logFilePath + "\n", LogLevel.Warn);
 
-					this._logFileStream = fs.createWriteStream(options.logFilePath);
+					this._logFileStream = fs.createWriteStream(
+						options.logFilePath,
+					);
 					this.logDateTime();
 					this.setupShutdownListeners();
-					this._logFileStream.on('error', err => {
+					this._logFileStream.on("error", (err) => {
 						handleError(err);
 					});
 				} catch (err) {
@@ -80,25 +98,30 @@ export class InternalLogger implements IInternalLogger {
 
 	private logDateTime(): void {
 		let d = new Date();
-		let dateString = d.getUTCFullYear() + '-' + `${d.getUTCMonth() + 1}` + '-' + d.getUTCDate();
-		const timeAndDateStamp = dateString + ', ' + getFormattedTimeString();
-		this.log(timeAndDateStamp + '\n', LogLevel.Verbose, false);
+		let dateString =
+			d.getUTCFullYear() +
+			"-" +
+			`${d.getUTCMonth() + 1}` +
+			"-" +
+			d.getUTCDate();
+		const timeAndDateStamp = dateString + ", " + getFormattedTimeString();
+		this.log(timeAndDateStamp + "\n", LogLevel.Verbose, false);
 	}
 
 	private setupShutdownListeners(): void {
-		process.on('beforeExit', this.beforeExitCallback);
-		process.on('SIGTERM', this.disposeCallback);
-		process.on('SIGINT', this.disposeCallback);
+		process.on("beforeExit", this.beforeExitCallback);
+		process.on("SIGTERM", this.disposeCallback);
+		process.on("SIGINT", this.disposeCallback);
 	}
 
 	private removeShutdownListeners(): void {
-		process.removeListener('beforeExit', this.beforeExitCallback);
-		process.removeListener('SIGTERM', this.disposeCallback);
-		process.removeListener('SIGINT', this.disposeCallback);
+		process.removeListener("beforeExit", this.beforeExitCallback);
+		process.removeListener("SIGTERM", this.disposeCallback);
+		process.removeListener("SIGINT", this.disposeCallback);
 	}
 
 	public dispose(): Promise<void> {
-		return new Promise(resolve => {
+		return new Promise((resolve) => {
 			this.removeShutdownListeners();
 			if (this._logFileStream) {
 				this._logFileStream.end(resolve);
@@ -120,9 +143,11 @@ export class InternalLogger implements IInternalLogger {
 
 		if (this._logToConsole) {
 			const logFn =
-				level === LogLevel.Error ? console.error :
-				level === LogLevel.Warn ? console.warn :
-				null;
+				level === LogLevel.Error
+					? console.error
+					: level === LogLevel.Warn
+						? console.warn
+						: null;
 
 			if (logFn) {
 				logFn(trimLastNewline(msg));
@@ -135,7 +160,7 @@ export class InternalLogger implements IInternalLogger {
 		}
 
 		if (this._prependTimestamp && prependTimestamp) {
-			msg = '[' + getFormattedTimeString() + '] ' + msg;
+			msg = "[" + getFormattedTimeString() + "] " + msg;
 		}
 
 		if (this._logFileStream) {
@@ -147,9 +172,9 @@ export class InternalLogger implements IInternalLogger {
 		// Truncate long messages, they can hang VS Code
 		if (msg.length > 1500) {
 			const endsInNewline = !!msg.match(/(\n|\r\n)$/);
-			msg = msg.substr(0, 1500) + '[...]';
+			msg = msg.substr(0, 1500) + "[...]";
 			if (endsInNewline) {
-				msg = msg + '\n';
+				msg = msg + "\n";
 			}
 		}
 
@@ -166,13 +191,24 @@ function getFormattedTimeString(): string {
 	let minuteString = _padZeroes(2, String(d.getUTCMinutes()));
 	let secondString = _padZeroes(2, String(d.getUTCSeconds()));
 	let millisecondString = _padZeroes(3, String(d.getUTCMilliseconds()));
-	return hourString + ':' + minuteString + ':' + secondString + '.' + millisecondString + ' UTC';
+	return (
+		hourString +
+		":" +
+		minuteString +
+		":" +
+		secondString +
+		"." +
+		millisecondString +
+		" UTC"
+	);
 }
 
 function _padZeroes(minDesiredLength: number, numberToPad: string): string {
 	if (numberToPad.length >= minDesiredLength) {
 		return numberToPad;
 	} else {
-		return String('0'.repeat(minDesiredLength) + numberToPad).slice(-minDesiredLength);
+		return String("0".repeat(minDesiredLength) + numberToPad).slice(
+			-minDesiredLength,
+		);
 	}
 }
