@@ -98,12 +98,14 @@ export class InternalLogger implements IInternalLogger {
 
 	private logDateTime(): void {
 		let d = new Date();
+
 		let dateString =
 			d.getUTCFullYear() +
 			"-" +
 			`${d.getUTCMonth() + 1}` +
 			"-" +
 			d.getUTCDate();
+
 		const timeAndDateStamp = dateString + ", " + getFormattedTimeString();
 		this.log(timeAndDateStamp + "\n", LogLevel.Verbose, false);
 	}
@@ -123,6 +125,7 @@ export class InternalLogger implements IInternalLogger {
 	public dispose(): Promise<void> {
 		return new Promise((resolve) => {
 			this.removeShutdownListeners();
+
 			if (this._logFileStream) {
 				this._logFileStream.end(resolve);
 				this._logFileStream = null;
@@ -173,6 +176,7 @@ export class InternalLogger implements IInternalLogger {
 		if (msg.length > 1500) {
 			const endsInNewline = !!msg.match(/(\n|\r\n)$/);
 			msg = msg.substr(0, 1500) + "[...]";
+
 			if (endsInNewline) {
 				msg = msg + "\n";
 			}
@@ -187,10 +191,15 @@ export class InternalLogger implements IInternalLogger {
 
 function getFormattedTimeString(): string {
 	let d = new Date();
+
 	let hourString = _padZeroes(2, String(d.getUTCHours()));
+
 	let minuteString = _padZeroes(2, String(d.getUTCMinutes()));
+
 	let secondString = _padZeroes(2, String(d.getUTCSeconds()));
+
 	let millisecondString = _padZeroes(3, String(d.getUTCMilliseconds()));
+
 	return (
 		hourString +
 		":" +

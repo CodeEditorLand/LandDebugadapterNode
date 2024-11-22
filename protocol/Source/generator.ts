@@ -36,8 +36,10 @@ function Module(moduleName: string, schema: IProtocol): string {
 		const d2 = schema.definitions[typeName];
 
 		let supertype: string | null = null;
+
 		if ((<P.AllOf>d2).allOf) {
 			const array = (<P.AllOf>d2).allOf;
+
 			for (let d of array) {
 				if ((<P.RefType>d).$ref) {
 					supertype = getRef((<P.RefType>d).$ref);
@@ -82,6 +84,7 @@ function Interface(
 
 	if (definition.properties && isEnumType(definition.properties.event)) {
 		const eventName = `${definition.properties.event.enum[0]}`;
+
 		if (eventName) {
 			desc = `Event message for '${eventName}' event type.\n${desc}`;
 		}
@@ -90,6 +93,7 @@ function Interface(
 		isEnumType(definition.properties.command)
 	) {
 		const requestName = `${definition.properties.command.enum[0]}`;
+
 		if (requestName) {
 			const RequestName =
 				requestName[0].toUpperCase() + requestName.substr(1);
@@ -102,6 +106,7 @@ function Interface(
 	s += comment({ description: desc });
 
 	let x = `interface ${interfaceName}`;
+
 	if (superType) {
 		x += ` extends ${superType}`;
 	}
@@ -122,21 +127,26 @@ function Interface(
 function Enum(typeName: string, definition: P.StringType): string {
 	let s = line();
 	s += comment(definition);
+
 	const x = enumAsOrType(definition.enum!, false);
 	s += line(`type ${typeName} = ${x};`);
+
 	return s;
 }
 
 function _Enum(typeName: string, definition: P.StringType): string {
 	let s = line();
 	s += comment(definition);
+
 	const x = enumAsOrType(definition._enum!, true);
 	s += line(`type ${typeName} = ${x};`);
+
 	return s;
 }
 
 function enumAsOrType(enm: string[], open = false) {
 	let r = enm.map((v) => `'${v}'`).join(" | ");
+
 	if (open) {
 		r += " | string";
 	}
@@ -161,6 +171,7 @@ function comment(c: P.Commentable): string {
 	// an 'open' enum
 	if (c._enum) {
 		description += "\nValues: ";
+
 		if (c.enumDescriptions) {
 			for (let i = 0; i < c._enum.length; i++) {
 				description += `\n'${c._enum[i]}': ${c.enumDescriptions[i]}`;
@@ -176,6 +187,7 @@ function comment(c: P.Commentable): string {
 		numIndents++;
 		description = description.replace(/\n/g, "\n" + indent());
 		numIndents--;
+
 		if (description.indexOf("\n") >= 0) {
 			return line(`/** ${description}\n${indent()}*/`);
 		} else {
@@ -188,8 +200,10 @@ function comment(c: P.Commentable): string {
 function openBlock(str: string, openChar?: string, indent?: boolean): string {
 	indent = typeof indent === "boolean" ? indent : true;
 	openChar = openChar || " {";
+
 	let s = line(`${str}${openChar}`, true, indent);
 	numIndents++;
+
 	return s;
 }
 
@@ -197,6 +211,7 @@ function closeBlock(closeChar?: string, newline?: boolean): string {
 	newline = typeof newline === "boolean" ? newline : true;
 	closeChar = closeChar || "}";
 	numIndents--;
+
 	return line(closeChar, newline);
 }
 
@@ -210,12 +225,15 @@ function propertyType(prop: any): string {
 	switch (prop.type) {
 		case "array":
 			const s = propertyType(prop.items);
+
 			if (s.indexOf(" ") >= 0) {
 				return `(${s})[]`;
 			}
 			return `${s}[]`;
+
 		case "object":
 			return objectType(prop);
+
 		case "string":
 			if (prop.enum) {
 				return enumAsOrType(prop.enum);
@@ -223,6 +241,7 @@ function propertyType(prop: any): string {
 				return enumAsOrType(prop._enum, true);
 			}
 			return `string`;
+
 		case "integer":
 			return "number";
 	}
@@ -255,6 +274,7 @@ function objectType(prop: any): string {
 		}
 
 		s += closeBlock("}", false);
+
 		return s;
 	}
 
@@ -282,8 +302,11 @@ function property(
 ): string {
 	let s = "";
 	s += comment(prop);
+
 	const type = propertyType(prop);
+
 	const propertyDef = `${name}${optional ? "?" : ""}: ${type}`;
+
 	if (
 		type[0] === "'" &&
 		type[type.length - 1] === "'" &&
@@ -298,11 +321,14 @@ function property(
 
 function getRef(ref: string): string {
 	const REXP = /#\/(.+)\/(.+)/;
+
 	const matches = REXP.exec(ref);
+
 	if (matches && matches.length === 3) {
 		return matches[2];
 	}
 	console.log("error: ref");
+
 	return ref;
 }
 
@@ -313,7 +339,9 @@ function indent(): string {
 function line(str?: string, newline?: boolean, indnt?: boolean): string {
 	newline = typeof newline === "boolean" ? newline : true;
 	indnt = typeof indnt === "boolean" ? indnt : true;
+
 	let s = "";
+
 	if (str) {
 		if (indnt) {
 			s += indent();

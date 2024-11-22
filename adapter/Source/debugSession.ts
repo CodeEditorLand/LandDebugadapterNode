@@ -25,6 +25,7 @@ export class Source implements DebugProtocol.Source {
 		this.name = name;
 		this.path = path;
 		this.sourceReference = id;
+
 		if (origin) {
 			(<any>this).origin = origin;
 		}
@@ -36,6 +37,7 @@ export class Source implements DebugProtocol.Source {
 
 export class Scope implements DebugProtocol.Scope {
 	name: string;
+
 	variablesReference: number;
 	expensive: boolean;
 
@@ -84,6 +86,7 @@ export class Thread implements DebugProtocol.Thread {
 
 	public constructor(id: number, name: string) {
 		this.id = id;
+
 		if (name) {
 			this.name = name;
 		} else {
@@ -95,6 +98,7 @@ export class Thread implements DebugProtocol.Thread {
 export class Variable implements DebugProtocol.Variable {
 	name: string;
 	value: string;
+
 	variablesReference: number;
 
 	public constructor(
@@ -107,6 +111,7 @@ export class Variable implements DebugProtocol.Variable {
 		this.name = name;
 		this.value = value;
 		this.variablesReference = ref;
+
 		if (typeof namedVariables === "number") {
 			(<DebugProtocol.Variable>this).namedVariables = namedVariables;
 		}
@@ -126,7 +131,9 @@ export class Breakpoint implements DebugProtocol.Breakpoint {
 		source?: Source,
 	) {
 		this.verified = verified;
+
 		const e: DebugProtocol.Breakpoint = this;
+
 		if (typeof line === "number") {
 			e.line = line;
 		}
@@ -179,6 +186,7 @@ export class StoppedEvent extends Event implements DebugProtocol.StoppedEvent {
 		this.body = {
 			reason: reason,
 		};
+
 		if (typeof threadId === "number") {
 			(this as DebugProtocol.StoppedEvent).body.threadId = threadId;
 		}
@@ -224,6 +232,7 @@ export class TerminatedEvent
 {
 	public constructor(restart?: any) {
 		super("terminated");
+
 		if (typeof restart === "boolean" || restart) {
 			const e: DebugProtocol.TerminatedEvent = this;
 			e.body = {
@@ -263,6 +272,7 @@ export class OutputEvent extends Event implements DebugProtocol.OutputEvent {
 			category: category,
 			output: output,
 		};
+
 		if (data !== undefined) {
 			this.body.data = data;
 		}
@@ -290,6 +300,7 @@ export class BreakpointEvent
 {
 	body: {
 		reason: string;
+
 		breakpoint: DebugProtocol.Breakpoint;
 	};
 
@@ -372,6 +383,7 @@ export class ProgressStartEvent
 			progressId: progressId,
 			title: title,
 		};
+
 		if (typeof message === "string") {
 			(this as DebugProtocol.ProgressStartEvent).body.message = message;
 		}
@@ -391,6 +403,7 @@ export class ProgressUpdateEvent
 		this.body = {
 			progressId: progressId,
 		};
+
 		if (typeof message === "string") {
 			(this as DebugProtocol.ProgressUpdateEvent).body.message = message;
 		}
@@ -410,6 +423,7 @@ export class ProgressEndEvent
 		this.body = {
 			progressId: progressId,
 		};
+
 		if (typeof message === "string") {
 			(this as DebugProtocol.ProgressEndEvent).body.message = message;
 		}
@@ -433,6 +447,7 @@ export class InvalidatedEvent
 	) {
 		super("invalidated");
 		this.body = {};
+
 		if (areas) {
 			this.body.areas = areas;
 		}
@@ -545,11 +560,13 @@ export class DebugSession extends ProtocolServer {
 		dest: ErrorDestination = ErrorDestination.User,
 	): void {
 		let msg: DebugProtocol.Message;
+
 		if (typeof codeOrMessage === "number") {
 			msg = <DebugProtocol.Message>{
 				id: <number>codeOrMessage,
 				format: format,
 			};
+
 			if (variables) {
 				msg.variables = variables;
 			}
@@ -569,6 +586,7 @@ export class DebugSession extends ProtocolServer {
 			true,
 			msg.variables,
 		);
+
 		if (!response.body) {
 			response.body = {};
 		}
@@ -1387,7 +1405,9 @@ export class DebugSession extends ProtocolServer {
 
 	private static uri2path(sourceUri: string): string {
 		let uri = new URL(sourceUri);
+
 		let s = decodeURIComponent(uri.pathname);
+
 		if (process.platform === "win32") {
 			if (/^\/[a-zA-Z]:/.test(s)) {
 				s = s[1].toLowerCase() + s.substr(2);

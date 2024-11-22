@@ -40,6 +40,7 @@ class Emitter<T> {
 						this._this = undefined;
 					},
 				};
+
 				return result;
 			};
 		}
@@ -106,7 +107,9 @@ export class ProtocolServer
 			this.dispatchRequest(<DebugProtocol.Request>msg);
 		} else if (msg.type === "response") {
 			const response = <DebugProtocol.Response>msg;
+
 			const clb = this._pendingRequests.get(response.request_seq);
+
 			if (clb) {
 				this._pendingRequests.delete(response.request_seq);
 				clb(response);
@@ -182,6 +185,7 @@ export class ProtocolServer
 		const request: any = {
 			command: command,
 		};
+
 		if (args && Object.keys(args).length > 0) {
 			request.arguments = args;
 		}
@@ -193,7 +197,9 @@ export class ProtocolServer
 
 			const timer = setTimeout(() => {
 				clearTimeout(timer);
+
 				const clb = this._pendingRequests.get(request.seq);
+
 				if (clb) {
 					this._pendingRequests.delete(request.seq);
 					clb(new Response(request, "timeout"));
@@ -242,6 +248,7 @@ export class ProtocolServer
 					);
 					this._rawData = this._rawData.slice(this._contentLength);
 					this._contentLength = -1;
+
 					if (message.length > 0) {
 						try {
 							let msg: DebugProtocol.ProtocolMessage =
@@ -260,11 +267,15 @@ export class ProtocolServer
 				}
 			} else {
 				const idx = this._rawData.indexOf(ProtocolServer.TWO_CRLF);
+
 				if (idx !== -1) {
 					const header = this._rawData.toString("utf8", 0, idx);
+
 					const lines = header.split("\r\n");
+
 					for (let i = 0; i < lines.length; i++) {
 						const pair = lines[i].split(/: +/);
+
 						if (pair[0] == "Content-Length") {
 							this._contentLength = +pair[1];
 						}
@@ -272,6 +283,7 @@ export class ProtocolServer
 					this._rawData = this._rawData.slice(
 						idx + ProtocolServer.TWO_CRLF.length,
 					);
+
 					continue;
 				}
 			}

@@ -10,9 +10,11 @@ import { DebugSession } from "./debugSession";
 export function runDebugAdapter(debugSession: typeof DebugSession) {
 	// parse arguments
 	let port = 0;
+
 	const args = process.argv.slice(2);
 	args.forEach(function (val, index, array) {
 		const portMatch = /^--server=(\d{4,5})$/.exec(val);
+
 		if (portMatch) {
 			port = parseInt(portMatch[1], 10);
 		}
@@ -26,6 +28,7 @@ export function runDebugAdapter(debugSession: typeof DebugSession) {
 			socket.on("end", () => {
 				console.error(">> client connection closed\n");
 			});
+
 			const session = new debugSession(false, true);
 			session.setRunAsServer(true);
 			session.start(socket, socket);
@@ -33,6 +36,7 @@ export function runDebugAdapter(debugSession: typeof DebugSession) {
 	} else {
 		// start a session
 		//console.error('waiting for debug protocol on stdin/stdout');
+
 		const session = new debugSession(false);
 		process.on("SIGTERM", () => {
 			session.shutdown();

@@ -43,6 +43,7 @@ export class LoggingDebugSession extends DebugSession {
 			// Don't create an infinite loop...
 
 			let objectToLog = event;
+
 			if (
 				event instanceof OutputEvent &&
 				event.body &&
@@ -75,6 +76,7 @@ export class LoggingDebugSession extends DebugSession {
 		logger.verbose(
 			`To client: ${JSON.stringify(command)}(${JSON.stringify(args)}), timeout: ${timeout}`,
 		);
+
 		super.sendRequest(command, args, timeout, cb);
 	}
 
@@ -83,6 +85,7 @@ export class LoggingDebugSession extends DebugSession {
 	 */
 	public sendResponse(response: DebugProtocol.Response): void {
 		logger.verbose(`To client: ${JSON.stringify(response)}`);
+
 		super.sendResponse(response);
 	}
 
@@ -90,6 +93,7 @@ export class LoggingDebugSession extends DebugSession {
 		logger.verbose(
 			`From client: ${request.command}(${JSON.stringify(request.arguments)})`,
 		);
+
 		super.dispatchRequest(request);
 	}
 }

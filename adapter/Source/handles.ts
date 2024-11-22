@@ -22,6 +22,7 @@ export class Handles<T> {
 	public create(value: T): number {
 		var handle = this._nextHandle++;
 		this._handleMap.set(handle, value);
+
 		return handle;
 	}
 

@@ -183,6 +183,7 @@ export class ProtocolClient extends ee.EventEmitter {
 			seq: this.sequence++,
 			command: command,
 		};
+
 		if (args && Object.keys(args).length > 0) {
 			request.arguments = args;
 		}
@@ -210,6 +211,7 @@ export class ProtocolClient extends ee.EventEmitter {
 					);
 					this.rawData = this.rawData.slice(this.contentLength);
 					this.contentLength = -1;
+
 					if (message.length > 0) {
 						this.dispatch(message);
 					}
@@ -217,11 +219,15 @@ export class ProtocolClient extends ee.EventEmitter {
 				}
 			} else {
 				const idx = this.rawData.indexOf(ProtocolClient.TWO_CRLF);
+
 				if (idx !== -1) {
 					const header = this.rawData.toString("utf8", 0, idx);
+
 					const lines = header.split("\r\n");
+
 					for (let i = 0; i < lines.length; i++) {
 						const pair = lines[i].split(/: +/);
+
 						if (pair[0] === "Content-Length") {
 							this.contentLength = +pair[1];
 						}
@@ -229,6 +235,7 @@ export class ProtocolClient extends ee.EventEmitter {
 					this.rawData = this.rawData.slice(
 						idx + ProtocolClient.TWO_CRLF.length,
 					);
+
 					continue;
 				}
 			}
@@ -244,7 +251,9 @@ export class ProtocolClient extends ee.EventEmitter {
 			this.emit(event.event, event);
 		} else {
 			const response = <DebugProtocol.Response>rawData;
+
 			const clb = this.pendingRequests.get(response.request_seq);
+
 			if (clb) {
 				this.pendingRequests.delete(response.request_seq);
 				clb(response);

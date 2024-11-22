@@ -30,6 +30,7 @@ export interface ILogger {
 export interface IInternalLogger {
 	dispose(): Promise<void>;
 	log(msg: string, level: LogLevel, prependTimestamp?: boolean): void;
+
 	setup(options: IInternalLoggerOptions): Promise<void>;
 }
 
@@ -66,6 +67,7 @@ export class Logger {
 		if (this._currentLogger) {
 			const disposeP = this._currentLogger.dispose();
 			this._currentLogger = null;
+
 			return disposeP;
 		} else {
 			return Promise.resolve();
@@ -78,6 +80,7 @@ export class Logger {
 	private _write(msg: string, level = LogLevel.Log): void {
 		// [null, undefined] => string
 		msg = msg + "";
+
 		if (this._pendingLogQ) {
 			this._pendingLogQ.push({ msg, level });
 		} else if (this._currentLogger) {
@@ -138,6 +141,7 @@ export class LogOutputEvent extends OutputEvent {
 				: level === LogLevel.Warn
 					? "console"
 					: "stdout";
+
 		super(msg, category);
 	}
 }

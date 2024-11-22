@@ -105,6 +105,7 @@ export class DebugClient extends ProtocolClient {
 					[this._executable],
 					this._spawnOptions,
 				);
+
 				const sanitize = (s: string) =>
 					s.toString().replace(/\r?\n$/gm, "");
 				this._adapterProcess.stderr.on("data", (data: string) => {
@@ -389,6 +390,7 @@ export class DebugClient extends ProtocolClient {
 		timeout?: number,
 	): Promise<DebugProtocol.Event> {
 		timeout = timeout || this.defaultTimeout;
+
 		let timeoutHandler: any;
 
 		return new Promise((resolve, reject) => {
@@ -396,6 +398,7 @@ export class DebugClient extends ProtocolClient {
 				clearTimeout(timeoutHandler);
 				resolve(event);
 			});
+
 			if (!this._socket) {
 				// no timeouts if debugging the tests
 				timeoutHandler = setTimeout(() => {
@@ -456,12 +459,14 @@ export class DebugClient extends ProtocolClient {
 		return this.waitForEvent("stopped")
 			.then((event) => {
 				assert.equal(event.body.reason, reason);
+
 				return this.stackTraceRequest({
 					threadId: event.body.threadId,
 				});
 			})
 			.then((response) => {
 				const frame = response.body.stackFrames[0];
+
 				if (
 					typeof expected.path === "string" ||
 					expected.path instanceof RegExp
@@ -534,11 +539,14 @@ export class DebugClient extends ProtocolClient {
 
 		return new Promise((resolve, reject) => {
 			let output = "";
+
 			let timeoutHandler: any;
 			this.on("output", (event) => {
 				const e = <DebugProtocol.OutputEvent>event;
+
 				if (e.body.category === category) {
 					output += e.body.output;
+
 					if (output.indexOf(expected) === 0) {
 						clearTimeout(timeoutHandler);
 						resolve(event);
@@ -556,6 +564,7 @@ export class DebugClient extends ProtocolClient {
 					}
 				}
 			});
+
 			if (!this._socket) {
 				// no timeouts if debugging the tests
 				timeoutHandler = setTimeout(() => {
