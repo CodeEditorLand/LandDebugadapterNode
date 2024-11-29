@@ -12,19 +12,25 @@ let numIndents = 0;
 
 function Module(moduleName: string, schema: IProtocol): string {
 	let s = "";
+
 	s += line(
 		"/*---------------------------------------------------------------------------------------------",
 	);
+
 	s += line(" *  Copyright (c) Microsoft Corporation. All rights reserved.");
+
 	s += line(
 		" *  Licensed under the MIT License. See License.txt in the project root for license information.",
 	);
+
 	s += line(
 		" *--------------------------------------------------------------------------------------------*/",
 	);
+
 	s += line();
 
 	//s += comment(schema.description);
+
 	s += comment({
 		description:
 			"Declaration module describing the VS Code debug protocol.\nAuto-generated from json schema. Do not edit manually.",
@@ -59,6 +65,7 @@ function Module(moduleName: string, schema: IProtocol): string {
 	}
 
 	s += closeBlock();
+
 	s += line();
 
 	return s;
@@ -97,6 +104,7 @@ function Interface(
 		if (requestName) {
 			const RequestName =
 				requestName[0].toUpperCase() + requestName.substr(1);
+
 			desc = `${RequestName} request; value of command field is '${requestName}'.\n${desc}`;
 		}
 	}
@@ -110,12 +118,14 @@ function Interface(
 	if (superType) {
 		x += ` extends ${superType}`;
 	}
+
 	s += openBlock(x);
 
 	for (let propName in definition.properties) {
 		const required = definition.required
 			? definition.required.indexOf(propName) >= 0
 			: false;
+
 		s += property(propName, !required, definition.properties[propName]);
 	}
 
@@ -126,9 +136,11 @@ function Interface(
 
 function Enum(typeName: string, definition: P.StringType): string {
 	let s = line();
+
 	s += comment(definition);
 
 	const x = enumAsOrType(definition.enum!, false);
+
 	s += line(`type ${typeName} = ${x};`);
 
 	return s;
@@ -136,9 +148,11 @@ function Enum(typeName: string, definition: P.StringType): string {
 
 function _Enum(typeName: string, definition: P.StringType): string {
 	let s = line();
+
 	s += comment(definition);
 
 	const x = enumAsOrType(definition._enum!, true);
+
 	s += line(`type ${typeName} = ${x};`);
 
 	return s;
@@ -150,6 +164,7 @@ function enumAsOrType(enm: string[], open = false) {
 	if (open) {
 		r += " | string";
 	}
+
 	return r;
 }
 
@@ -176,6 +191,7 @@ function comment(c: P.Commentable): string {
 			for (let i = 0; i < c._enum.length; i++) {
 				description += `\n'${c._enum[i]}': ${c.enumDescriptions[i]}`;
 			}
+
 			description += "\netc.";
 		} else {
 			description += `${c._enum.map((v) => `'${v}'`).join(", ")}, etc.`;
@@ -184,8 +200,11 @@ function comment(c: P.Commentable): string {
 
 	if (description) {
 		description = description.replace(/<code>(.*)<\/code>/g, "'$1'");
+
 		numIndents++;
+
 		description = description.replace(/\n/g, "\n" + indent());
+
 		numIndents--;
 
 		if (description.indexOf("\n") >= 0) {
@@ -194,14 +213,17 @@ function comment(c: P.Commentable): string {
 			return line(`/** ${description} */`);
 		}
 	}
+
 	return "";
 }
 
 function openBlock(str: string, openChar?: string, indent?: boolean): string {
 	indent = typeof indent === "boolean" ? indent : true;
+
 	openChar = openChar || " {";
 
 	let s = line(`${str}${openChar}`, true, indent);
+
 	numIndents++;
 
 	return s;
@@ -209,7 +231,9 @@ function openBlock(str: string, openChar?: string, indent?: boolean): string {
 
 function closeBlock(closeChar?: string, newline?: boolean): string {
 	newline = typeof newline === "boolean" ? newline : true;
+
 	closeChar = closeChar || "}";
+
 	numIndents--;
 
 	return line(closeChar, newline);
@@ -219,9 +243,11 @@ function propertyType(prop: any): string {
 	if (prop.$ref) {
 		return getRef(prop.$ref);
 	}
+
 	if (Array.isArray(prop.oneOf)) {
 		return (prop.oneOf as any[]).map((t) => propertyType(t)).join(" | ");
 	}
+
 	switch (prop.type) {
 		case "array":
 			const s = propertyType(prop.items);
@@ -229,6 +255,7 @@ function propertyType(prop: any): string {
 			if (s.indexOf(" ") >= 0) {
 				return `(${s})[]`;
 			}
+
 			return `${s}[]`;
 
 		case "object":
@@ -240,11 +267,13 @@ function propertyType(prop: any): string {
 			} else if (prop._enum) {
 				return enumAsOrType(prop._enum, true);
 			}
+
 			return `string`;
 
 		case "integer":
 			return "number";
 	}
+
 	if (Array.isArray(prop.type)) {
 		if (
 			prop.type.length === 7 &&
@@ -259,6 +288,7 @@ function propertyType(prop: any): string {
 				.join(" | ");
 		}
 	}
+
 	return prop.type;
 }
 
@@ -270,6 +300,7 @@ function objectType(prop: any): string {
 			const required = prop.required
 				? prop.required.indexOf(propName) >= 0
 				: false;
+
 			s += property(propName, !required, prop.properties[propName]);
 		}
 
@@ -285,6 +316,7 @@ function objectType(prop: any): string {
 	if (prop.additionalProperties) {
 		return `{ [key: string]: ${orType(prop.additionalProperties.type)}; }`;
 	}
+
 	return "{}";
 }
 
@@ -292,6 +324,7 @@ function orType(enm: string | string[]): string {
 	if (typeof enm === "string") {
 		return enm;
 	}
+
 	return enm.join(" | ");
 }
 
@@ -301,6 +334,7 @@ function property(
 	prop: P.PropertyType,
 ): string {
 	let s = "";
+
 	s += comment(prop);
 
 	const type = propertyType(prop);
@@ -316,6 +350,7 @@ function property(
 	} else {
 		s += line(`${propertyDef};`);
 	}
+
 	return s;
 }
 
@@ -327,6 +362,7 @@ function getRef(ref: string): string {
 	if (matches && matches.length === 3) {
 		return matches[2];
 	}
+
 	console.log("error: ref");
 
 	return ref;
@@ -338,6 +374,7 @@ function indent(): string {
 
 function line(str?: string, newline?: boolean, indnt?: boolean): string {
 	newline = typeof newline === "boolean" ? newline : true;
+
 	indnt = typeof indnt === "boolean" ? indnt : true;
 
 	let s = "";
@@ -346,11 +383,14 @@ function line(str?: string, newline?: boolean, indnt?: boolean): string {
 		if (indnt) {
 			s += indent();
 		}
+
 		s += str;
 	}
+
 	if (newline) {
 		s += "\n";
 	}
+
 	return s;
 }
 

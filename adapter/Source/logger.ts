@@ -17,18 +17,23 @@ export type ILogCallback = (outputEvent: OutputEvent) => void;
 
 interface ILogItem {
 	msg: string;
+
 	level: LogLevel;
 }
 
 export interface ILogger {
 	log(msg: string, level?: LogLevel): void;
+
 	verbose(msg: string): void;
+
 	warn(msg: string): void;
+
 	error(msg: string): void;
 }
 
 export interface IInternalLogger {
 	dispose(): Promise<void>;
+
 	log(msg: string, level: LogLevel, prependTimestamp?: boolean): void;
 
 	setup(options: IInternalLoggerOptions): Promise<void>;
@@ -36,7 +41,9 @@ export interface IInternalLogger {
 
 export interface IInternalLoggerOptions {
 	consoleMinLogLevel: LogLevel;
+
 	logFilePath?: string;
+
 	prependTimestamp?: boolean;
 }
 
@@ -44,10 +51,12 @@ export class Logger {
 	private _logFilePathFromInit: string;
 
 	private _currentLogger: IInternalLogger;
+
 	private _pendingLogQ: ILogItem[] = [];
 
 	log(msg: string, level = LogLevel.Log): void {
 		msg = msg + "\n";
+
 		this._write(msg, level);
 	}
 
@@ -66,6 +75,7 @@ export class Logger {
 	dispose(): Promise<void> {
 		if (this._currentLogger) {
 			const disposeP = this._currentLogger.dispose();
+
 			this._currentLogger = null;
 
 			return disposeP;
@@ -108,11 +118,14 @@ export class Logger {
 				logFilePath,
 				prependTimestamp,
 			};
+
 			this._currentLogger.setup(options).then(() => {
 				// Now that we have a minimum logLevel, we can clear out the queue of pending messages
 				if (this._pendingLogQ) {
 					const logQ = this._pendingLogQ;
+
 					this._pendingLogQ = null;
+
 					logQ.forEach((item) => this._write(item.msg, item.level));
 				}
 			});
@@ -126,7 +139,9 @@ export class Logger {
 	): void {
 		// Re-init, create new global Logger
 		this._pendingLogQ = this._pendingLogQ || [];
+
 		this._currentLogger = new InternalLogger(logCallback, logToConsole);
+
 		this._logFilePathFromInit = logFilePath;
 	}
 }

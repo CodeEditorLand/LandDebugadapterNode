@@ -4,8 +4,11 @@
 
 export interface IProtocol {
 	$schema: string;
+
 	title: string;
+
 	description: string;
+
 	type: "object";
 
 	definitions: { [key: string]: Protocol.Definition2 };
@@ -19,6 +22,7 @@ export module Protocol {
 	}
 
 	export type Definition2 = Definition | AllOf | StringType;
+
 	type PropertyType = PrimitiveType | StringType | ObjectType | ArrayType;
 
 	export interface PrimitiveType extends BaseType {

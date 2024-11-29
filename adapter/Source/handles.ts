@@ -7,6 +7,7 @@ export class Handles<T> {
 	private START_HANDLE = 1000;
 
 	private _nextHandle: number;
+
 	private _handleMap = new Map<number, T>();
 
 	public constructor(startHandle?: number) {
@@ -16,11 +17,13 @@ export class Handles<T> {
 
 	public reset(): void {
 		this._nextHandle = this.START_HANDLE;
+
 		this._handleMap = new Map<number, T>();
 	}
 
 	public create(value: T): number {
 		var handle = this._nextHandle++;
+
 		this._handleMap.set(handle, value);
 
 		return handle;

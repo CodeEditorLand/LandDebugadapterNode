@@ -12,7 +12,9 @@ import { runDebugAdapter } from "./runDebugAdapter";
 
 export class Source implements DebugProtocol.Source {
 	name: string;
+
 	path: string;
+
 	sourceReference: number;
 
 	public constructor(
@@ -23,12 +25,15 @@ export class Source implements DebugProtocol.Source {
 		data?: any,
 	) {
 		this.name = name;
+
 		this.path = path;
+
 		this.sourceReference = id;
 
 		if (origin) {
 			(<any>this).origin = origin;
 		}
+
 		if (data) {
 			(<any>this).adapterData = data;
 		}
@@ -39,6 +44,7 @@ export class Scope implements DebugProtocol.Scope {
 	name: string;
 
 	variablesReference: number;
+
 	expensive: boolean;
 
 	public constructor(
@@ -47,22 +53,34 @@ export class Scope implements DebugProtocol.Scope {
 		expensive: boolean = false,
 	) {
 		this.name = name;
+
 		this.variablesReference = reference;
+
 		this.expensive = expensive;
 	}
 }
 
 export class StackFrame implements DebugProtocol.StackFrame {
 	id: number;
+
 	name: string;
+
 	source?: DebugProtocol.Source;
+
 	line: number;
+
 	column: number;
+
 	endLine?: number;
+
 	endColumn?: number;
+
 	canRestart?: boolean;
+
 	instructionPointerReference?: string;
+
 	moduleId?: number | string;
+
 	presentationHint?: "normal" | "label" | "subtle";
 
 	public constructor(
@@ -73,15 +91,20 @@ export class StackFrame implements DebugProtocol.StackFrame {
 		col: number = 0,
 	) {
 		this.id = i;
+
 		this.source = src;
+
 		this.line = ln;
+
 		this.column = col;
+
 		this.name = nm;
 	}
 }
 
 export class Thread implements DebugProtocol.Thread {
 	id: number;
+
 	name: string;
 
 	public constructor(id: number, name: string) {
@@ -97,6 +120,7 @@ export class Thread implements DebugProtocol.Thread {
 
 export class Variable implements DebugProtocol.Variable {
 	name: string;
+
 	value: string;
 
 	variablesReference: number;
@@ -109,12 +133,15 @@ export class Variable implements DebugProtocol.Variable {
 		namedVariables?: number,
 	) {
 		this.name = name;
+
 		this.value = value;
+
 		this.variablesReference = ref;
 
 		if (typeof namedVariables === "number") {
 			(<DebugProtocol.Variable>this).namedVariables = namedVariables;
 		}
+
 		if (typeof indexedVariables === "number") {
 			(<DebugProtocol.Variable>this).indexedVariables = indexedVariables;
 		}
@@ -137,9 +164,11 @@ export class Breakpoint implements DebugProtocol.Breakpoint {
 		if (typeof line === "number") {
 			e.line = line;
 		}
+
 		if (typeof column === "number") {
 			e.column = column;
 		}
+
 		if (source) {
 			e.source = source;
 		}
@@ -152,22 +181,28 @@ export class Breakpoint implements DebugProtocol.Breakpoint {
 
 export class Module implements DebugProtocol.Module {
 	id: number | string;
+
 	name: string;
 
 	public constructor(id: number | string, name: string) {
 		this.id = id;
+
 		this.name = name;
 	}
 }
 
 export class CompletionItem implements DebugProtocol.CompletionItem {
 	label: string;
+
 	start: number;
+
 	length: number;
 
 	public constructor(label: string, start: number, length: number = 0) {
 		this.label = label;
+
 		this.start = start;
+
 		this.length = length;
 	}
 }
@@ -183,6 +218,7 @@ export class StoppedEvent extends Event implements DebugProtocol.StoppedEvent {
 		exceptionText?: string,
 	) {
 		super("stopped");
+
 		this.body = {
 			reason: reason,
 		};
@@ -190,6 +226,7 @@ export class StoppedEvent extends Event implements DebugProtocol.StoppedEvent {
 		if (typeof threadId === "number") {
 			(this as DebugProtocol.StoppedEvent).body.threadId = threadId;
 		}
+
 		if (typeof exceptionText === "string") {
 			(this as DebugProtocol.StoppedEvent).body.text = exceptionText;
 		}
@@ -206,6 +243,7 @@ export class ContinuedEvent
 
 	public constructor(threadId: number, allThreadsContinued?: boolean) {
 		super("continued");
+
 		this.body = {
 			threadId: threadId,
 		};
@@ -235,6 +273,7 @@ export class TerminatedEvent
 
 		if (typeof restart === "boolean" || restart) {
 			const e: DebugProtocol.TerminatedEvent = this;
+
 			e.body = {
 				restart: restart,
 			};
@@ -249,6 +288,7 @@ export class ExitedEvent extends Event implements DebugProtocol.ExitedEvent {
 
 	public constructor(exitCode: number) {
 		super("exited");
+
 		this.body = {
 			exitCode: exitCode,
 		};
@@ -258,7 +298,9 @@ export class ExitedEvent extends Event implements DebugProtocol.ExitedEvent {
 export class OutputEvent extends Event implements DebugProtocol.OutputEvent {
 	body: {
 		category: string;
+
 		output: string;
+
 		data?: any;
 	};
 
@@ -268,6 +310,7 @@ export class OutputEvent extends Event implements DebugProtocol.OutputEvent {
 		data?: any,
 	) {
 		super("output");
+
 		this.body = {
 			category: category,
 			output: output,
@@ -282,11 +325,13 @@ export class OutputEvent extends Event implements DebugProtocol.OutputEvent {
 export class ThreadEvent extends Event implements DebugProtocol.ThreadEvent {
 	body: {
 		reason: string;
+
 		threadId: number;
 	};
 
 	public constructor(reason: string, threadId: number) {
 		super("thread");
+
 		this.body = {
 			reason: reason,
 			threadId: threadId,
@@ -306,6 +351,7 @@ export class BreakpointEvent
 
 	public constructor(reason: string, breakpoint: DebugProtocol.Breakpoint) {
 		super("breakpoint");
+
 		this.body = {
 			reason: reason,
 			breakpoint: breakpoint,
@@ -316,6 +362,7 @@ export class BreakpointEvent
 export class ModuleEvent extends Event implements DebugProtocol.ModuleEvent {
 	body: {
 		reason: "new" | "changed" | "removed";
+
 		module: DebugProtocol.Module;
 	};
 
@@ -324,6 +371,7 @@ export class ModuleEvent extends Event implements DebugProtocol.ModuleEvent {
 		module: DebugProtocol.Module,
 	) {
 		super("module");
+
 		this.body = {
 			reason: reason,
 			module: module,
@@ -337,6 +385,7 @@ export class LoadedSourceEvent
 {
 	body: {
 		reason: "new" | "changed" | "removed";
+
 		source: DebugProtocol.Source;
 	};
 
@@ -345,6 +394,7 @@ export class LoadedSourceEvent
 		source: DebugProtocol.Source,
 	) {
 		super("loadedSource");
+
 		this.body = {
 			reason: reason,
 			source: source,
@@ -362,6 +412,7 @@ export class CapabilitiesEvent
 
 	public constructor(capabilities: DebugProtocol.Capabilities) {
 		super("capabilities");
+
 		this.body = {
 			capabilities: capabilities,
 		};
@@ -374,11 +425,13 @@ export class ProgressStartEvent
 {
 	body: {
 		progressId: string;
+
 		title: string;
 	};
 
 	public constructor(progressId: string, title: string, message?: string) {
 		super("progressStart");
+
 		this.body = {
 			progressId: progressId,
 			title: title,
@@ -400,6 +453,7 @@ export class ProgressUpdateEvent
 
 	public constructor(progressId: string, message?: string) {
 		super("progressUpdate");
+
 		this.body = {
 			progressId: progressId,
 		};
@@ -420,6 +474,7 @@ export class ProgressEndEvent
 
 	public constructor(progressId: string, message?: string) {
 		super("progressEnd");
+
 		this.body = {
 			progressId: progressId,
 		};
@@ -436,7 +491,9 @@ export class InvalidatedEvent
 {
 	body: {
 		areas?: DebugProtocol.InvalidatedAreas[];
+
 		threadId?: number;
+
 		stackFrameId?: number;
 	};
 
@@ -446,14 +503,17 @@ export class InvalidatedEvent
 		stackFrameId?: number,
 	) {
 		super("invalidated");
+
 		this.body = {};
 
 		if (areas) {
 			this.body.areas = areas;
 		}
+
 		if (threadId) {
 			this.body.threadId = threadId;
 		}
+
 		if (stackFrameId) {
 			this.body.stackFrameId = stackFrameId;
 		}
@@ -463,12 +523,15 @@ export class InvalidatedEvent
 export class MemoryEvent extends Event implements DebugProtocol.MemoryEvent {
 	body: {
 		memoryReference: string;
+
 		offset: number;
+
 		count: number;
 	};
 
 	public constructor(memoryReference: string, offset: number, count: number) {
 		super("memory");
+
 		this.body = { memoryReference, offset, count };
 	}
 }
@@ -480,11 +543,15 @@ export enum ErrorDestination {
 
 export class DebugSession extends ProtocolServer {
 	private _debuggerLinesStartAt1: boolean;
+
 	private _debuggerColumnsStartAt1: boolean;
+
 	private _debuggerPathsAreURIs: boolean;
 
 	private _clientLinesStartAt1: boolean;
+
 	private _clientColumnsStartAt1: boolean;
+
 	private _clientPathsAreURIs: boolean;
 
 	protected _isServer: boolean;
@@ -499,12 +566,17 @@ export class DebugSession extends ProtocolServer {
 			typeof obsolete_debuggerLinesAndColumnsStartAt1 === "boolean"
 				? obsolete_debuggerLinesAndColumnsStartAt1
 				: false;
+
 		this._debuggerLinesStartAt1 = linesAndColumnsStartAt1;
+
 		this._debuggerColumnsStartAt1 = linesAndColumnsStartAt1;
+
 		this._debuggerPathsAreURIs = false;
 
 		this._clientLinesStartAt1 = true;
+
 		this._clientColumnsStartAt1 = true;
+
 		this._clientPathsAreURIs = false;
 
 		this._isServer =
@@ -513,6 +585,7 @@ export class DebugSession extends ProtocolServer {
 		this.on("close", () => {
 			this.shutdown();
 		});
+
 		this.on("error", (error) => {
 			this.shutdown();
 		});
@@ -570,9 +643,11 @@ export class DebugSession extends ProtocolServer {
 			if (variables) {
 				msg.variables = variables;
 			}
+
 			if (dest & ErrorDestination.User) {
 				msg.showUser = true;
 			}
+
 			if (dest & ErrorDestination.Telemetry) {
 				msg.sendTelemetry = true;
 			}
@@ -581,6 +656,7 @@ export class DebugSession extends ProtocolServer {
 		}
 
 		response.success = false;
+
 		response.message = DebugSession.formatPII(
 			msg.format,
 			true,
@@ -590,6 +666,7 @@ export class DebugSession extends ProtocolServer {
 		if (!response.body) {
 			response.body = {};
 		}
+
 		response.body.error = msg;
 
 		this.sendResponse(response);
@@ -620,6 +697,7 @@ export class DebugSession extends ProtocolServer {
 				if (typeof args.linesStartAt1 === "boolean") {
 					this._clientLinesStartAt1 = args.linesStartAt1;
 				}
+
 				if (typeof args.columnsStartAt1 === "boolean") {
 					this._clientColumnsStartAt1 = args.columnsStartAt1;
 				}
@@ -636,7 +714,9 @@ export class DebugSession extends ProtocolServer {
 					const initializeResponse = <
 						DebugProtocol.InitializeResponse
 					>response;
+
 					initializeResponse.body = {};
+
 					this.initializeRequest(initializeResponse, args);
 				}
 			} else if (request.command === "launch") {
@@ -1003,6 +1083,7 @@ export class DebugSession extends ProtocolServer {
 		request?: DebugProtocol.Request,
 	): void {
 		this.sendResponse(response);
+
 		this.shutdown();
 	}
 
@@ -1341,6 +1422,7 @@ export class DebugSession extends ProtocolServer {
 		if (this._debuggerLinesStartAt1) {
 			return this._clientLinesStartAt1 ? line : line + 1;
 		}
+
 		return this._clientLinesStartAt1 ? line - 1 : line;
 	}
 
@@ -1348,6 +1430,7 @@ export class DebugSession extends ProtocolServer {
 		if (this._debuggerLinesStartAt1) {
 			return this._clientLinesStartAt1 ? line : line - 1;
 		}
+
 		return this._clientLinesStartAt1 ? line + 1 : line;
 	}
 
@@ -1355,6 +1438,7 @@ export class DebugSession extends ProtocolServer {
 		if (this._debuggerColumnsStartAt1) {
 			return this._clientColumnsStartAt1 ? column : column + 1;
 		}
+
 		return this._clientColumnsStartAt1 ? column - 1 : column;
 	}
 
@@ -1362,6 +1446,7 @@ export class DebugSession extends ProtocolServer {
 		if (this._debuggerColumnsStartAt1) {
 			return this._clientColumnsStartAt1 ? column : column - 1;
 		}
+
 		return this._clientColumnsStartAt1 ? column + 1 : column;
 	}
 
@@ -1373,6 +1458,7 @@ export class DebugSession extends ProtocolServer {
 				return DebugSession.path2uri(clientPath);
 			}
 		}
+
 		return clientPath;
 	}
 
@@ -1384,6 +1470,7 @@ export class DebugSession extends ProtocolServer {
 				return DebugSession.path2uri(debuggerPath);
 			}
 		}
+
 		return debuggerPath;
 	}
 
@@ -1394,8 +1481,10 @@ export class DebugSession extends ProtocolServer {
 			if (/^[A-Z]:/.test(path)) {
 				path = path[0].toLowerCase() + path.substr(1);
 			}
+
 			path = path.replace(/\\/g, "/");
 		}
+
 		path = encodeURI(path);
 
 		let uri = new URL(`file:`); // ignore 'path' for now
@@ -1412,8 +1501,10 @@ export class DebugSession extends ProtocolServer {
 			if (/^\/[a-zA-Z]:/.test(s)) {
 				s = s[1].toLowerCase() + s.substr(2);
 			}
+
 			s = s.replace(/\//g, "\\");
 		}
+
 		return s;
 	}
 
@@ -1437,6 +1528,7 @@ export class DebugSession extends ProtocolServer {
 				) {
 					return match;
 				}
+
 				return args[paramName] && args.hasOwnProperty(paramName)
 					? args[paramName]
 					: match;

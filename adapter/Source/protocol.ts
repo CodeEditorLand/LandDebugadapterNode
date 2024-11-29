@@ -24,19 +24,24 @@ interface Event0<T> {
 
 class Emitter<T> {
 	private _event?: Event0<T>;
+
 	private _listener?: (e: T) => void;
+
 	private _this?: any;
 
 	get event(): Event0<T> {
 		if (!this._event) {
 			this._event = (listener: (e: T) => any, thisArg?: any) => {
 				this._listener = listener;
+
 				this._this = thisArg;
 
 				let result: IDisposable;
+
 				result = {
 					dispose: () => {
 						this._listener = undefined;
+
 						this._this = undefined;
 					},
 				};
@@ -44,6 +49,7 @@ class Emitter<T> {
 				return result;
 			};
 		}
+
 		return this._event;
 	}
 
@@ -61,6 +67,7 @@ class Emitter<T> {
 
 	dispose() {
 		this._listener = undefined;
+
 		this._this = undefined;
 	}
 }
@@ -83,9 +90,13 @@ export class ProtocolServer
 	private _sendMessage = new Emitter<DebugProtocolMessage>();
 
 	private _rawData: Buffer;
+
 	private _contentLength: number;
+
 	private _sequence: number = 1;
+
 	private _writableStream: NodeJS.WritableStream;
+
 	private _pendingRequests = new Map<
 		number,
 		(response: DebugProtocol.Response) => void
@@ -112,6 +123,7 @@ export class ProtocolServer
 
 			if (clb) {
 				this._pendingRequests.delete(response.request_seq);
+
 				clb(response);
 			}
 		}
@@ -128,6 +140,7 @@ export class ProtocolServer
 		outStream: NodeJS.WritableStream,
 	): void {
 		this._writableStream = outStream;
+
 		this._rawData = Buffer.alloc(0);
 
 		inStream.on("data", (data: Buffer) => this._handleData(data));
@@ -135,6 +148,7 @@ export class ProtocolServer
 		inStream.on("close", () => {
 			this._emitEvent(new Event("close"));
 		});
+
 		inStream.on("error", (error) => {
 			this._emitEvent(
 				new Event(
@@ -202,6 +216,7 @@ export class ProtocolServer
 
 				if (clb) {
 					this._pendingRequests.delete(request.seq);
+
 					clb(new Response(request, "timeout"));
 				}
 			}, timeout);
@@ -223,15 +238,18 @@ export class ProtocolServer
 		message: DebugProtocol.ProtocolMessage,
 	): void {
 		message.type = typ;
+
 		message.seq = this._sequence++;
 
 		if (this._writableStream) {
 			const json = JSON.stringify(message);
+
 			this._writableStream.write(
 				`Content-Length: ${Buffer.byteLength(json, "utf8")}\r\n\r\n${json}`,
 				"utf8",
 			);
 		}
+
 		this._sendMessage.fire(message);
 	}
 
@@ -246,13 +264,16 @@ export class ProtocolServer
 						0,
 						this._contentLength,
 					);
+
 					this._rawData = this._rawData.slice(this._contentLength);
+
 					this._contentLength = -1;
 
 					if (message.length > 0) {
 						try {
 							let msg: DebugProtocol.ProtocolMessage =
 								JSON.parse(message);
+
 							this.handleMessage(msg);
 						} catch (e) {
 							this._emitEvent(
@@ -263,6 +284,7 @@ export class ProtocolServer
 							);
 						}
 					}
+
 					continue; // there may be more complete messages to process
 				}
 			} else {
@@ -280,6 +302,7 @@ export class ProtocolServer
 							this._contentLength = +pair[1];
 						}
 					}
+
 					this._rawData = this._rawData.slice(
 						idx + ProtocolServer.TWO_CRLF.length,
 					);
@@ -287,6 +310,7 @@ export class ProtocolServer
 					continue;
 				}
 			}
+
 			break;
 		}
 	}

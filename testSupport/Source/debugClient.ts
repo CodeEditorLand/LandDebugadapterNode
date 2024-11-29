@@ -15,15 +15,21 @@ import net = require("net");
 
 export interface ILocation {
 	path: string;
+
 	line: number;
+
 	column?: number;
+
 	verified?: boolean;
 }
 
 export interface IPartialLocation {
 	path?: string;
+
 	line?: number;
+
 	column?: number;
+
 	verified?: boolean;
 }
 
@@ -31,11 +37,17 @@ export class DebugClient extends ProtocolClient {
 	private static CASE_INSENSITIVE_FILESYSTEM: boolean;
 
 	private _runtime: string;
+
 	private _executable: string;
+
 	private _adapterProcess: cp.ChildProcess;
+
 	private _spawnOptions: cp.SpawnOptions;
+
 	private _enableStderr: boolean;
+
 	private _debugType: string;
+
 	private _socket: net.Socket;
 
 	private _supportsConfigurationDoneRequest: boolean;
@@ -66,17 +78,25 @@ export class DebugClient extends ProtocolClient {
 		enableStderr?: boolean,
 	) {
 		super();
+
 		this._runtime = debugAdapterRuntime;
+
 		this._executable = debugAdapterExecutable;
+
 		this._spawnOptions = spawnOptions;
+
 		this._enableStderr = enableStderr;
+
 		this._debugType = debugType;
+
 		this._supportsConfigurationDoneRequest = false;
 
 		if (DebugClient.CASE_INSENSITIVE_FILESYSTEM === undefined) {
 			try {
 				fs.accessSync(process.execPath.toLowerCase(), constants.F_OK);
+
 				fs.accessSync(process.execPath.toUpperCase(), constants.F_OK);
+
 				DebugClient.CASE_INSENSITIVE_FILESYSTEM = true;
 			} catch (err) {
 				DebugClient.CASE_INSENSITIVE_FILESYSTEM = false;
@@ -97,6 +117,7 @@ export class DebugClient extends ProtocolClient {
 			if (typeof port === "number") {
 				this._socket = net.createConnection(port, "127.0.0.1", () => {
 					this.connect(this._socket, this._socket);
+
 					resolve();
 				});
 			} else {
@@ -108,6 +129,7 @@ export class DebugClient extends ProtocolClient {
 
 				const sanitize = (s: string) =>
 					s.toString().replace(/\r?\n$/gm, "");
+
 				this._adapterProcess.stderr.on("data", (data: string) => {
 					if (this._enableStderr) {
 						console.log(sanitize(data));
@@ -116,8 +138,10 @@ export class DebugClient extends ProtocolClient {
 
 				this._adapterProcess.on("error", (err) => {
 					console.log(err);
+
 					reject(err);
 				});
+
 				this._adapterProcess.on(
 					"exit",
 					(code: number, signal: string) => {
@@ -131,6 +155,7 @@ export class DebugClient extends ProtocolClient {
 					this._adapterProcess.stdout,
 					this._adapterProcess.stdin,
 				);
+
 				resolve();
 			}
 		});
@@ -152,10 +177,13 @@ export class DebugClient extends ProtocolClient {
 	private stopAdapter() {
 		if (this._adapterProcess) {
 			this._adapterProcess.kill();
+
 			this._adapterProcess = null;
 		}
+
 		if (this._socket) {
 			this._socket.end();
+
 			this._socket = null;
 		}
 	}
@@ -173,6 +201,7 @@ export class DebugClient extends ProtocolClient {
 				pathFormat: "path",
 			};
 		}
+
 		return this.send("initialize", args);
 	}
 
@@ -396,6 +425,7 @@ export class DebugClient extends ProtocolClient {
 		return new Promise((resolve, reject) => {
 			this.once(eventType, (event) => {
 				clearTimeout(timeoutHandler);
+
 				resolve(event);
 			});
 
@@ -434,6 +464,7 @@ export class DebugClient extends ProtocolClient {
 			) {
 				this._supportsConfigurationDoneRequest = true;
 			}
+
 			return this.launchRequest(launchArgs);
 		});
 	}
@@ -477,6 +508,7 @@ export class DebugClient extends ProtocolClient {
 						"stopped location: path mismatch",
 					);
 				}
+
 				if (typeof expected.line === "number") {
 					assert.equal(
 						frame.line,
@@ -484,6 +516,7 @@ export class DebugClient extends ProtocolClient {
 						"stopped location: line mismatch",
 					);
 				}
+
 				if (typeof expected.column === "number") {
 					assert.equal(
 						frame.column,
@@ -491,6 +524,7 @@ export class DebugClient extends ProtocolClient {
 						"stopped location: column mismatch",
 					);
 				}
+
 				return response;
 			});
 	}
@@ -506,6 +540,7 @@ export class DebugClient extends ProtocolClient {
 				"breakpoint verification mismatch: path",
 			);
 		}
+
 		if (typeof locA.line === "number") {
 			assert.equal(
 				locA.line,
@@ -513,6 +548,7 @@ export class DebugClient extends ProtocolClient {
 				"breakpoint verification mismatch: line",
 			);
 		}
+
 		if (
 			typeof locB.column === "number" &&
 			typeof locA.column === "number"
@@ -541,6 +577,7 @@ export class DebugClient extends ProtocolClient {
 			let output = "";
 
 			let timeoutHandler: any;
+
 			this.on("output", (event) => {
 				const e = <DebugProtocol.OutputEvent>event;
 
@@ -549,6 +586,7 @@ export class DebugClient extends ProtocolClient {
 
 					if (output.indexOf(expected) === 0) {
 						clearTimeout(timeoutHandler);
+
 						resolve(event);
 					} else if (expected.indexOf(output) !== 0) {
 						const sanitize = (s: string) =>
@@ -556,6 +594,7 @@ export class DebugClient extends ProtocolClient {
 								.toString()
 								.replace(/\r/gm, "\\r")
 								.replace(/\n/gm, "\\n");
+
 						reject(
 							new Error(
 								`received data '${sanitize(output)}' is not a prefix of the expected data '${sanitize(expected)}'`,
@@ -590,10 +629,12 @@ export class DebugClient extends ProtocolClient {
 				if (typeof path === "string") {
 					path = path.toLowerCase();
 				}
+
 				if (typeof expected === "string") {
 					expected = (<string>expected).toLowerCase();
 				}
 			}
+
 			assert.equal(path, expected, message);
 		}
 	}
@@ -629,6 +670,7 @@ export class DebugClient extends ProtocolClient {
 						typeof location.verified === "boolean"
 							? location.verified
 							: true;
+
 					assert.equal(
 						bp.verified,
 						verified,
@@ -640,6 +682,7 @@ export class DebugClient extends ProtocolClient {
 						line: bp.line,
 						path: bp.source && bp.source.path,
 					};
+
 					this.assertPartialLocationsEqual(
 						actualLocation,
 						expectedBPLocation || location,

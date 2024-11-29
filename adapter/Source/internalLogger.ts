@@ -21,6 +21,7 @@ import {
  */
 export class InternalLogger implements IInternalLogger {
 	private _minLogLevel: LogLevel;
+
 	private _logToConsole: boolean;
 
 	/** Log info that meets minLogLevel is sent to this callback. */
@@ -40,6 +41,7 @@ export class InternalLogger implements IInternalLogger {
 
 	constructor(logCallback: ILogCallback, isServer?: boolean) {
 		this._logCallback = logCallback;
+
 		this._logToConsole = isServer;
 
 		this._minLogLevel = LogLevel.Warn;
@@ -58,6 +60,7 @@ export class InternalLogger implements IInternalLogger {
 
 	public async setup(options: IInternalLoggerOptions): Promise<void> {
 		this._minLogLevel = options.consoleMinLogLevel;
+
 		this._prependTimestamp = options.prependTimestamp;
 
 		// Open a log file in the specified location. Overwritten on each run.
@@ -78,14 +81,19 @@ export class InternalLogger implements IInternalLogger {
 					await fs.promises.mkdir(path.dirname(options.logFilePath), {
 						recursive: true,
 					});
+
 					this.log(`Verbose logs are written to:\n`, LogLevel.Warn);
+
 					this.log(options.logFilePath + "\n", LogLevel.Warn);
 
 					this._logFileStream = fs.createWriteStream(
 						options.logFilePath,
 					);
+
 					this.logDateTime();
+
 					this.setupShutdownListeners();
+
 					this._logFileStream.on("error", (err) => {
 						handleError(err);
 					});
@@ -107,18 +115,23 @@ export class InternalLogger implements IInternalLogger {
 			d.getUTCDate();
 
 		const timeAndDateStamp = dateString + ", " + getFormattedTimeString();
+
 		this.log(timeAndDateStamp + "\n", LogLevel.Verbose, false);
 	}
 
 	private setupShutdownListeners(): void {
 		process.on("beforeExit", this.beforeExitCallback);
+
 		process.on("SIGTERM", this.disposeCallback);
+
 		process.on("SIGINT", this.disposeCallback);
 	}
 
 	private removeShutdownListeners(): void {
 		process.removeListener("beforeExit", this.beforeExitCallback);
+
 		process.removeListener("SIGTERM", this.disposeCallback);
+
 		process.removeListener("SIGINT", this.disposeCallback);
 	}
 
@@ -128,6 +141,7 @@ export class InternalLogger implements IInternalLogger {
 
 			if (this._logFileStream) {
 				this._logFileStream.end(resolve);
+
 				this._logFileStream = null;
 			} else {
 				resolve();
@@ -175,6 +189,7 @@ export class InternalLogger implements IInternalLogger {
 		// Truncate long messages, they can hang VS Code
 		if (msg.length > 1500) {
 			const endsInNewline = !!msg.match(/(\n|\r\n)$/);
+
 			msg = msg.substr(0, 1500) + "[...]";
 
 			if (endsInNewline) {
@@ -184,6 +199,7 @@ export class InternalLogger implements IInternalLogger {
 
 		if (this._logCallback) {
 			const event = new LogOutputEvent(msg, level);
+
 			this._logCallback(event);
 		}
 	}

@@ -28,6 +28,7 @@ export class LoggingDebugSession extends DebugSession {
 		outStream: NodeJS.WritableStream,
 	): void {
 		super.start(inStream, outStream);
+
 		logger.init(
 			(e) => this.sendEvent(e),
 			this.obsolete_logFilePath,
@@ -51,7 +52,9 @@ export class LoggingDebugSession extends DebugSession {
 				event.body.data.doNotLogOutput
 			) {
 				delete event.body.data.doNotLogOutput;
+
 				objectToLog = { ...event };
+
 				objectToLog.body = {
 					...event.body,
 					output: "<output not logged>",

@@ -12,7 +12,9 @@ export class InternalLogger implements IInternalLogger {
 	dispose(): Promise<void> {
 		return undefined;
 	}
+
 	log(msg: string, level: LogLevel, prependTimestamp?: boolean): void {}
+
 	setup(options: IInternalLoggerOptions): Promise<void> {
 		return undefined;
 	}
