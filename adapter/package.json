@@ -1,16 +1,16 @@
 {
-	"name": "@codeeditorland/debugadapter",
-	"description": "Debug adapter implementation for node",
-	"main": "./lib/main.js",
 	"browser": {
 		"./lib/internalLogger.js": "./lib/web/internalLoggerStub.js",
 		"./lib/runDebugAdapter.js": "./lib/web/runDebugAdapterStub.js"
 	},
-	"typings": "./lib/main",
+	"dependencies": {},
+	"description": "Debug adapter implementation for node",
+	"devDependencies": {},
+	"main": "./lib/main.js",
+	"name": "@codeeditorland/debugadapter",
 	"scripts": {
 		"compile": "tsc",
 		"prepack": "npm run compile"
 	},
-	"dependencies": {},
-	"devDependencies": {}
+	"typings": "./lib/main"
 }
