@@ -1,25 +1,12 @@
 {
 	"name": "@codeeditorland/debugprotocol",
-	"version": "1.68.0",
 	"description": "Npm module with declarations for the Visual Studio Code debug protocol",
-	"bugs": {
-		"url": "https://github.com/microsoft/vscode-debugadapter-node/issues"
-	},
-	"repository": {
-		"type": "git",
-		"url": "https://github.com/microsoft/vscode-debugadapter-node.git"
-	},
-	"license": "MIT",
-	"author": "Microsoft Corporation",
 	"main": "./lib/debugProtocol.js",
 	"typings": "./lib/debugProtocol",
 	"scripts": {
 		"compile": "tsc && node lib/generator",
-		"prepack": "npm run compile",
-		"watch": "tsc -w"
+		"prepack": "npm run compile"
 	},
 	"dependencies": {},
-	"devDependencies": {
-		"typescript": "^4.9.4"
-	}
+	"devDependencies": {}
 }
