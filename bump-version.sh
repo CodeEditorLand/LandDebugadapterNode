@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/usr/bin/env bash
 
 npm version --workspaces "$@" --workspaces-update
 
